@@ -1,6 +1,29 @@
 LaTeX Plugin for Sublime Text 2 and 3
 =====================================
 
+Patch to automatically move generated files after compilation. A arbitrary number of custom output folders can be defined in the settings together with file extensions to specify the files to move. The additional settings entry looks as follows:
+
+	"output_settings" : [
+
+		// multiple entries can be added
+
+		{
+			// relative path (to the root directory) where to move the files	
+			"path": "..\\Out",
+			// list of file extensions to specify files to move	
+			"exts": [".pdf",".synctex.gz"]
+		},
+
+		{	
+			"path": "..\\Tmp",  
+			"exts": [".blg",".bbl",".aux",".log",".brf",".nlo",".out",".dvi",".ps",
+			".lof",".toc",".fls",".fdb_latexmk",".pdfsync",".ind",".ilg",".idx"]
+		}
+
+	]
+
+Only tested on Windows 7 with SumatraPDF. Should also work on the other platforms.
+
 by Marciano Siniscalchi
 [http://tekonomist.wordpress.com]
 
