@@ -136,6 +136,24 @@
 		}
 	},
 
+	"output_settings" : [
+
+		// multiple entries can be added
+
+		{
+			// relative path (to the root directory) where to move the files	
+			"path": "..\\Out",
+			// list of file extensions to specify files to move	
+			"exts": [".pdf",".synctex.gz"]
+		},
+
+		{	
+			"path": "..\\Tmp",  
+			"exts": [".blg",".bbl",".aux",".log",".brf",".nlo",".out",".dvi",".ps",
+			".lof",".toc",".fls",".fdb_latexmk",".pdfsync",".ind",".ilg",".idx"]
+		}
+
+	],
 
 // ------------------------------------------------------------------
 // Formatting of bibliographic references in quick panel

@@ -367,6 +367,8 @@ class make_pdfCommand(sublime_plugin.WindowCommand):
 		# self.output_view.show(reg) # scroll to top
 		# self.output_view.end_edit(edit)
 		self.output_view.run_command("do_finish_edit")
+		# run command to move the files
+		self.window.active_view().run_command("move_files")
 		if can_switch_to_pdf:
 			self.window.active_view().run_command("jump_to_pdf", {"from_keybinding": False})
 

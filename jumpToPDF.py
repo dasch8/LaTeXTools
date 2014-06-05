@@ -47,6 +47,19 @@ class jump_to_pdfCommand(sublime_plugin.TextCommand):
 		print ("!TEX root = ", repr(root) ) # need something better here, but this works.
 		rootName, rootExt = os.path.splitext(root)
 		pdffile = rootName + u'.pdf'
+		# find path to pdf specified in the output settings
+		output_settings = s.get("output_settings")
+		pdf_path = ""
+		for move_entry in output_settings:
+			move_path = move_entry.get("path")
+			move_exts = move_entry.get("exts")
+			for ext in move_exts:
+				if ext==".pdf":
+					pdf_path = os.path.join(os.path.dirname(pdffile),move_path,os.path.basename(pdffile))
+					break
+			if pdf_path != "":
+				pdffile = pdf_path
+				break
 		(line, col) = self.view.rowcol(self.view.sel()[0].end())
 		print ("Jump to: ", line,col)
 		# column is actually ignored up to 0.94
