@@ -27,6 +27,8 @@ class BibParsingError(Exception):
 OLD_STYLE_CITE_REGEX = re.compile(r"([^_]*_)?([a-zX*]*?)etic(?:\\|\b)")
 NEW_STYLE_CITE_REGEX = re.compile(r"([^{},]*)(?:,[^{},]*)*\{(?:\].*?\[){0,2}([a-zX*]*?)etic\\")
 
+bibinputs_path = os.environ.get("BIBINPUTS")
+
 
 def match(rex, str):
     m = rex.match(str)
@@ -51,6 +53,7 @@ def find_bib_files(rootdir, src, bibfiles):
     try:
         src_file = codecs.open(file_path, "r", 'UTF-8')
     except IOError:
+        print(file_path)
         sublime.status_message("LaTeXTools WARNING: cannot open included file " + file_path)
         print ("WARNING! I can't find it! Check your \\include's and \\input's.")
         return
@@ -81,7 +84,16 @@ def find_bib_files(rootdir, src, bibfiles):
                 bf = bf + '.bib'
             # We join with rootdir - everything is off the dir of the master file
             bf = os.path.normpath(os.path.join(rootdir,bf))
-            bibfiles.append(bf)
+            if not os.path.exists(bf):
+                print("File "+bf+" does not exists in root folder, searching in BIBINPUTS...")
+                bf = os.path.join(bibinputs_path,os.path.basename(bf))
+                if os.path.exists(bf):
+                    print("File "+bf+" found in BIBINPUTS.")
+                    bibfiles.append(bf)
+                else:
+                    print("File "+bf+" does not exists.")    
+            else:
+                bibfiles.append(bf)
 
     # search through input tex files recursively
     for f in re.findall(r'\\(?:input|include)\{[^\}]+\}',src_content):
