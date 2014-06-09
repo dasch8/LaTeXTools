@@ -36,7 +36,7 @@ class move_filesCommand(sublime_plugin.TextCommand):
 			move_exts = move_entry.get("exts")
 			if move_path!=None and move_exts!=None:
 				# destination folder
-				dest_dir = os.path.join(dir_path,move_path)
+				dest_dir = os.path.normpath(os.path.join(dir_path,move_path))
 				# create destionation folder if not already exists
 				if not os.path.exists(dest_dir):
 					os.mkdir(dest_dir)
@@ -45,7 +45,7 @@ class move_filesCommand(sublime_plugin.TextCommand):
 					file_to_move = self.tex_base + ext
 					if os.path.exists(file_to_move):
 						file_name_to_move = os.path.basename(file_to_move)
-						dest_path = os.path.join(dir_path,move_path,file_name_to_move)
+						dest_path = os.path.normpath(os.path.join(dir_path,move_path,file_name_to_move))
 						print("moving file "+file_to_move+"->"+dest_path)
 						shutil.move(file_to_move,dest_path)
 

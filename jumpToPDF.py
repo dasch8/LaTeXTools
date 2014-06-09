@@ -55,7 +55,7 @@ class jump_to_pdfCommand(sublime_plugin.TextCommand):
 			move_exts = move_entry.get("exts")
 			for ext in move_exts:
 				if ext==".pdf":
-					pdf_path = os.path.join(os.path.dirname(pdffile),move_path,os.path.basename(pdffile))
+					pdf_path = os.path.normpath(os.path.join(os.path.dirname(pdffile),move_path,os.path.basename(pdffile)))
 					break
 			if pdf_path != "":
 				pdffile = pdf_path
