@@ -1,5 +1,5 @@
-Output folders patch
---------------------
+Some patches
+------------
 
 - Patch to also include bib files from BIBINPUTS if not found in the root folder.
 
