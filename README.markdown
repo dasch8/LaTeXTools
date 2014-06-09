@@ -24,7 +24,7 @@ Some patches
 
 		]
 
-Only tested on Windows 7 with SumatraPDF. Should also work on the other platforms.
+Tested on Windows 7 with SumatraPDF and OSX Mavericks with Skim (PDF update also works).
 
 LaTeX Plugin for Sublime Text 2 and 3
 =====================================
