@@ -1,26 +1,28 @@
 Output folders patch
 --------------------
 
-Patch to automatically move generated files after compilation. A arbitrary number of custom output folders can be defined in the settings together with file extensions to specify the files to move. The additional settings entry looks as follows:
+- Patch to also include bib files from BIBINPUTS if not found in the root folder.
 
-	"output_settings" : [
+- Patch to automatically move generated files after compilation. A arbitrary number of custom output folders can be defined in the settings together with file extensions to specify the files to move. The additional settings entry looks as follows:
 
-		// multiple entries can be added
+		"output_settings" : [
 
-		{
-			// relative path (to the root directory) where to move the files	
-			"path": "..\\Out",
-			// list of file extensions to specify files to move	
-			"exts": [".pdf",".synctex.gz"]
-		},
+			// multiple entries can be added
 
-		{	
-			"path": "..\\Tmp",  
-			"exts": [".blg",".bbl",".aux",".log",".brf",".nlo",".out",".dvi",".ps",
-			".lof",".toc",".fls",".fdb_latexmk",".pdfsync",".ind",".ilg",".idx"]
-		}
+			{
+				// relative path (to the root directory) where to move the files	
+				"path": "..\\Out",
+				// list of file extensions to specify files to move	
+				"exts": [".pdf",".synctex.gz"]
+			},
 
-	]
+			{	
+				"path": "..\\Tmp",  
+				"exts": [".blg",".bbl",".aux",".log",".brf",".nlo",".out",".dvi",".ps",
+				".lof",".toc",".fls",".fdb_latexmk",".pdfsync",".ind",".ilg",".idx"]
+			}
+
+		]
 
 Only tested on Windows 7 with SumatraPDF. Should also work on the other platforms.
 
