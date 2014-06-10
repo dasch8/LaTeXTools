@@ -27,8 +27,15 @@ class BibParsingError(Exception):
 OLD_STYLE_CITE_REGEX = re.compile(r"([^_]*_)?([a-zX*]*?)etic(?:\\|\b)")
 NEW_STYLE_CITE_REGEX = re.compile(r"([^{},]*)(?:,[^{},]*)*\{(?:\].*?\[){0,2}([a-zX*]*?)etic\\")
 
+# get BIBINPUTS paths when loading plugin
 bibinputs_path = os.environ.get("BIBINPUTS")
-
+sep = ""
+if ':' in bibinputs_path:
+    sep = ':'
+elif ';' in bibinputs_path:
+    sep = ';'
+if sep != "":
+    bibinputs_paths = bibinputs_path.split(sep)
 
 def match(rex, str):
     m = rex.match(str)
@@ -86,12 +93,13 @@ def find_bib_files(rootdir, src, bibfiles):
             bf = os.path.normpath(os.path.join(rootdir,bf))
             if not os.path.exists(bf):
                 print("File "+bf+" does not exists in root folder, searching in BIBINPUTS...")
-                bf = os.path.join(bibinputs_path,os.path.basename(bf))
-                if os.path.exists(bf):
-                    print("File "+bf+" found in BIBINPUTS.")
-                    bibfiles.append(bf)
-                else:
-                    print("File "+bf+" does not exists.")    
+                for bib_path in bibinputs_paths:
+                    bf = os.path.join(bib_path,os.path.basename(bf))
+                    if os.path.exists(bf):
+                        print("File "+bf+" found in BIBINPUTS.")
+                        bibfiles.append(bf)
+                        # break if first match is found
+                        break  
             else:
                 bibfiles.append(bf)
 
