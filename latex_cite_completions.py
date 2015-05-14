@@ -30,9 +30,9 @@ NEW_STYLE_CITE_REGEX = re.compile(r"([^{},]*)(?:,[^{},]*)*\{(?:\].*?\[){0,2}([a-
 # get BIBINPUTS paths when loading plugin
 bibinputs_path = os.environ.get("BIBINPUTS")
 sep = ""
-if ':' in bibinputs_path:
+if os.name=="mac" or os.name=="posix":
     sep = ':'
-elif ';' in bibinputs_path:
+elif os.name=="nt":
     sep = ';'
 if sep != "":
     bibinputs_paths = bibinputs_path.split(sep)
@@ -95,6 +95,7 @@ def find_bib_files(rootdir, src, bibfiles):
                 print("File "+bf+" does not exists in root folder, searching in BIBINPUTS...")
                 for bib_path in bibinputs_paths:
                     bf = os.path.join(bib_path,os.path.basename(bf))
+                    print(bf)
                     if os.path.exists(bf):
                         print("File "+bf+" found in BIBINPUTS.")
                         bibfiles.append(bf)
