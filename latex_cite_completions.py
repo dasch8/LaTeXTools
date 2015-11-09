@@ -5,9 +5,12 @@ if sublime.version() < '3000':
     # we are on ST2 and Python 2.X
     _ST3 = False
     import getTeXRoot
+    import kpsewhich
+    from kpsewhich import kpsewhich
 else:
     _ST3 = True
     from . import getTeXRoot
+    from .kpsewhich import kpsewhich
 
 
 import sublime_plugin
@@ -27,15 +30,6 @@ class BibParsingError(Exception):
 OLD_STYLE_CITE_REGEX = re.compile(r"([^_]*_)?([a-zX*]*?)etic(?:\\|\b)")
 NEW_STYLE_CITE_REGEX = re.compile(r"([^{},]*)(?:,[^{},]*)*\{(?:\].*?\[){0,2}([a-zX*]*?)etic\\")
 
-# get BIBINPUTS paths when loading plugin
-bibinputs_path = os.environ.get("BIBINPUTS")
-sep = ""
-if os.name=="mac" or os.name=="posix":
-    sep = ':'
-elif os.name=="nt":
-    sep = ';'
-if sep != "":
-    bibinputs_paths = bibinputs_path.split(sep)
 
 def match(rex, str):
     m = rex.match(str)
@@ -60,7 +54,6 @@ def find_bib_files(rootdir, src, bibfiles):
     try:
         src_file = codecs.open(file_path, "r", 'UTF-8')
     except IOError:
-        print(file_path)
         sublime.status_message("LaTeXTools WARNING: cannot open included file " + file_path)
         print ("WARNING! I can't find it! Check your \\include's and \\input's.")
         return
@@ -89,20 +82,14 @@ def find_bib_files(rootdir, src, bibfiles):
         for bf in bfiles:
             if bf[-4:].lower() != '.bib':
                 bf = bf + '.bib'
-            # We join with rootdir - everything is off the dir of the master file
-            bf = os.path.normpath(os.path.join(rootdir,bf))
-            if not os.path.exists(bf):
-                print("File "+bf+" does not exists in root folder, searching in BIBINPUTS...")
-                for bib_path in bibinputs_paths:
-                    bf = os.path.join(bib_path,os.path.basename(bf))
-                    print(bf)
-                    if os.path.exists(bf):
-                        print("File "+bf+" found in BIBINPUTS.")
-                        bibfiles.append(bf)
-                        # break if first match is found
-                        break  
-            else:
-                bibfiles.append(bf)
+            # We join with rootdir, the dir of the master file
+            candidate_file = os.path.normpath(os.path.join(rootdir,bf))
+            # if the file doesn't exist, search the default tex paths
+            if not os.path.exists(candidate_file):
+                candidate_file = kpsewhich(bf, 'mlbib')
+
+            if candidate_file is not None and os.path.exists(candidate_file):
+                bibfiles.append(candidate_file)
 
     # search through input tex files recursively
     for f in re.findall(r'\\(?:input|include)\{[^\}]+\}',src_content):
@@ -282,6 +269,8 @@ def get_cite_completions(view, point, autocompleting=False):
                 continue
             if line.lower()[0:7] == "@string":
                 continue
+            if line.lower()[0:9] == "@preamble":
+                continue
             if line[0] == "@":
                 # First, see if we can add a record; the keyword must be non-empty, other fields not
                 if entry["keyword"]:
@@ -305,7 +294,7 @@ def get_cite_completions(view, point, autocompleting=False):
                     entry["keyword"] = kp_match.group(1) # No longer decode. Was: .decode('ascii','ignore')
                 else:
                     print ("Cannot process this @ line: " + line)
-                    print ("Previous record " + entry)
+                    print ("Previous keyword (if any): " + entry["keyword"])
                 continue
             # Now test for title, author, etc.
             # Note: we capture only the first line, but that's OK for our purposes
